@@ -1,0 +1,551 @@
+{
+  "programs": {
+    "beginner": {
+      "name": "Beginner",
+      "levels": [
+        {
+          "level": 1,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 1
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 2
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 3
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 2
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 6
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 10
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 10
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 21
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 21
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 1
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 3
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 4
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 3
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 8
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 13
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 13
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 26
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 26
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 3,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 2
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 3
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 5
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 3
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 10
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 16
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 16
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 33
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 33
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 4,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 2
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 4
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 6
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 4
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 12
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 20
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 20
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 41
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 41
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 3
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 5
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 8
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 5
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 15
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 26
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 26
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 51
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 51
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 3
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 6
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 10
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 6
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 19
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 32
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 32
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 64
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 64
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 4
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 8
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 12
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 8
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 24
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 40
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 40
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 80
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 80
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 8,
+          "days": [
+            {
+              "day": 1,
+              "type": "amrap",
+              "durationSeconds": 1200,
+              "label": "Max rounds in 20 minutes",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 5
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 10
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 15
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "type": "rounds_for_time",
+              "rounds": 5,
+              "label": "5 rounds for time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 10
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 30
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 50
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "type": "for_time",
+              "label": "For time",
+              "work": [
+                {
+                  "exercise": "pull-up",
+                  "reps": 50
+                },
+                {
+                  "exercise": "push-up",
+                  "reps": 100
+                },
+                {
+                  "exercise": "squat",
+                  "reps": 100
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "tabata": {
+    "name": "Tabata",
+    "intervals": [
+      {
+        "exercise": "push-up",
+        "rounds": 8,
+        "workSeconds": 20,
+        "restSeconds": 10
+      },
+      {
+        "exercise": "squat",
+        "rounds": 8,
+        "workSeconds": 20,
+        "restSeconds": 10
+      },
+      {
+        "exercise": "pull-up",
+        "rounds": 8,
+        "workSeconds": 20,
+        "restSeconds": 10
+      },
+      {
+        "exercise": "evil wheel / plank",
+        "rounds": 8,
+        "workSeconds": 20,
+        "restSeconds": 10
+      }
+    ],
+    "rotationRestSeconds": 60
+  }
+}

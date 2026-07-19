@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#16a34a">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+<script defer src="/site.js"></script>
+<title>Exercises · SimpleFit</title>
+<meta name="description" content="SimpleFit workout levels, exercises, and pull-up substitutions.">
+<link rel="canonical" href="https://simplefit.org/exercises.html">
+<meta property="og:title" content="Exercises · SimpleFit">
+<meta property="og:description" content="SimpleFit workout levels, exercises, and pull-up substitutions.">
+<meta property="og:type" content="website">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="wrap header-grid">
+    <a class="brand" href="/" aria-label="SimpleFit home">
+      <span class="brand-mark">SF</span>
+      <span><strong>SimpleFit</strong><small>Bodyweight exercises · circuit training</small></span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/exercises.html">Workouts</a>
+      <a href="/app.html" class="nav-cta">Practice</a>
+      <a href="/nutrition.html">Nutrition</a>
+      <a href="/community.html">Community</a>
+      <a href="/faq.html">FAQ</a>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap main">
+
+<h1>Workouts</h1>
+<p class="lead">Choose a level that is right for you. If workouts take longer than 30 minutes or less than 5 minutes, decrease or increase your level respectively. Warm up slowly, use full range of motion and good form, and stop if something hurts.</p>
+<div class="notice danger"><strong>Safety:</strong> Consult your physician before starting a fitness program. The only equipment you may need for the core program is a pull-up bar. Pull-up substitutions are fine.</div>
+<section class="section card">
+  <h2>Beginner program</h2>
+  <p>Do the three different workouts each week, for example Monday, Wednesday, Friday.</p>
+  <table class="workout-table"><thead><tr><th>Level</th><th>Day 1 · AMRAP 20 min</th><th>Day 2 · 5 rounds for time</th><th>Day 3 · For time</th></tr></thead><tbody id="beginner-table"></tbody></table>
+</section>
+<section class="section grid two">
+  <article class="card"><h2>Exercise explanations</h2><h3>Pull-up</h3><p>Grasp a bar and pull until your chin clears it, then lower until arms and shoulders are fully extended. Use the grip that feels right and alternate grips.</p><h3>Push-up</h3><p>Raise and lower your body with your arms while keeping your back flat. Try to keep elbows close to your sides.</p><h3>Squat</h3><p>Bend at knees and hips, lower the torso between the legs, then stand. Keep torso upright, weight on heels, and knees tracking safely.</p></article>
+  <article class="card"><h2>Pull-up substitutions</h2><p>If you cannot do a pull-up yet, use substitutions. A rough rule from the legacy content: <strong>3 substitutions = 1 regular pull-up</strong>.</p><ul><li>Body rows using a towel or rope over a bar.</li><li>Assisted pull-ups with feet on a box.</li><li>Jumping pull-ups.</li><li>Chair-assisted hold at the top.</li><li>Slow negatives from the top position.</li></ul></article>
+</section>
+<section class="section card"><h2>Intermediate, advanced, and Tabata</h2><p>The app currently includes the beginner ladder and a Tabata timer. Intermediate and advanced ladders are preserved as migration targets and should be encoded next.</p><a class="button" href="/app.html">Practice now</a></section>
+<script>
+fetch('/data/workouts.json').then(r=>r.json()).then(data=>{
+ const tbody=document.querySelector('#beginner-table');
+ tbody.innerHTML=data.programs.beginner.levels.map(l=>`<tr><th>${l.level}</th><td>${fmt(l.days[0])}</td><td>${fmt(l.days[1])}</td><td>${fmt(l.days[2])}</td></tr>`).join('');
+ function fmt(d){return d.work.map(x=>`${x.reps} ${x.exercise}`).join('<br>')}
+});
+</script>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p>SimpleFit is free, community-preserved, and works offline. Consult your physician before starting any fitness program. If something hurts, stop.</p>
+  </div>
+</footer>
+</body>
+</html>

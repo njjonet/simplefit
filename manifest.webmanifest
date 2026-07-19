@@ -1,0 +1,18 @@
+{
+  "name": "SimpleFit Workout Companion",
+  "short_name": "SimpleFit",
+  "description": "The classic SimpleFit bodyweight workout program, rebuilt as an offline-friendly PWA.",
+  "start_url": "/app.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
