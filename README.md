@@ -9,7 +9,7 @@ A GitHub Pages rebuild of SimpleFit.org: static content plus an offline-friendly
 - Beginner SimpleFit workout runner
 - AMRAP countdown and stopwatch modes
 - Workout history stored locally in IndexedDB
-- JSON export/import for user-owned data
+- Compressed ZIP export and ZIP/JSON import for user-owned data
 
 ## Local preview
 
