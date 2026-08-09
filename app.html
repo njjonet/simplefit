@@ -50,20 +50,23 @@
     <button id="exportData" class="secondary">Export history (.zip)</button>
     <label class="button secondary" style="text-align:center">Import history<input id="importData" type="file" accept=".zip,.json,application/zip,application/json" class="sr-only"></label>
   </aside>
-  <section class="card" aria-live="polite">
+  <section class="card">
     <p class="kicker" id="workoutType">Workout</p>
     <h2 id="workoutTitle">Choose a workout</h2>
-    <div class="timer" id="timer">00:00</div>
+    <div class="timer" id="timer" role="timer" aria-live="off">00:00</div>
+    <p class="muted" id="timerStatus" role="status" aria-live="polite">Ready</p>
     <div class="button-row"><button id="startPause">Start</button><button id="finish" class="secondary">Finish & save</button><button id="reset" class="ghost">Reset</button></div>
     <div class="section"><h3>Work</h3><div id="exerciseList" class="exercise-list"></div></div>
-    <div class="section grid two"><label>Rounds completed<input id="rounds" type="number" min="0" step="1" value="0"></label><label>Score / time note<input id="score" placeholder="e.g. 12:35 or 14 rounds + 2 push-ups"></label></div>
-    <label class="section">Notes<textarea id="notes" rows="3" placeholder="How did it feel? substitutions? form notes?"></textarea></label>
+    <div class="section grid two"><label>Rounds completed<input id="rounds" type="number" min="0" step="1" value="0"></label><label>Score / time note<input id="score" maxlength="10000" placeholder="e.g. 12:35 or 14 rounds + 2 push-ups"></label></div>
+    <label class="section">Notes<textarea id="notes" maxlength="10000" rows="3" placeholder="How did it feel? substitutions? form notes?"></textarea></label>
   </section>
 </div>
 <section class="section card"><h2>History stored on this device</h2><div id="history"></div></section>
-<script src="vendor/fflate.min.js"></script>
-<script src="backup.js"></script>
-<script src="app.js"></script>
+<script src="vendor/fflate.min.js?v=repair-1"></script>
+<script src="backup.js?v=repair-1"></script>
+<script src="app-core.js?v=repair-1"></script>
+<script src="timer-core.js?v=repair-1"></script>
+<script src="app.js?v=repair-1"></script>
 
 </main>
 <footer class="site-footer">

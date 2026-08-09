@@ -1,23 +1,439 @@
+const $ = selector => document.querySelector(selector);
+const DB_NAME = 'simplefit-db';
+const STORE = 'logs';
+const PERSISTENCE_LOCK_NAME = 'simplefit-history-persistence';
 
-const $ = s => document.querySelector(s);
-let data, current, timerId, startedAt, elapsed = 0, running = false, mode = 'stopwatch', remaining = 0;
-const DB_NAME='simplefit-db', STORE='logs';
-function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
-async function addLog(log){const db=await openDb();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(log);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
-async function getLogs(){const db=await openDb();return new Promise((res,rej)=>{const r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>res(r.result.sort((a,b)=>b.createdAt.localeCompare(a.createdAt)));r.onerror=()=>rej(r.error);});}
-async function replaceLogs(logs){const db=await openDb();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');const st=tx.objectStore(STORE);st.clear();logs.forEach(l=>st.put(l));tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
-function fmt(sec){sec=Math.max(0,Math.floor(sec));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
-function renderLevels(){const level=$('#level'); level.innerHTML=data.programs.beginner.levels.map(l=>`<option value="${l.level}">Level ${l.level}</option>`).join('');}
-function renderWorkout(){const program=$('#program').value; $('#level-wrap').style.display=program==='tabata'?'none':''; $('#day-wrap').style.display=program==='tabata'?'none':'';
- if(program==='tabata'){current={program:'tabata',type:'tabata',title:'Tabata · 32 intervals',work:data.tabata.intervals.flatMap(s=>Array.from({length:s.rounds},(_,i)=>({exercise:s.exercise,reps:`20s work / 10s rest #${i+1}`})))}; mode='countdown'; remaining=32*30 + 3*60;}
- else{const lvl=+$('#level').value, day=+$('#day').value; const level=data.programs.beginner.levels.find(l=>l.level===lvl); current={...level.days[day-1],program:'beginner',level:lvl,title:`Beginner level ${lvl} · Day ${day}`}; mode=current.type==='amrap'?'countdown':'stopwatch'; remaining=current.durationSeconds||0;}
- elapsed=0; running=false; clearInterval(timerId); $('#startPause').textContent='Start'; $('#workoutTitle').textContent=current.title; $('#workoutType').textContent=current.label || current.type; $('#timer').textContent=mode==='countdown'?fmt(remaining):'00:00'; $('#exerciseList').innerHTML=current.work.map(x=>`<div class="exercise-item"><strong>${x.exercise}</strong><span>${x.reps} ${Number.isFinite(x.reps)?'reps':''}</span></div>`).join(''); localStorage.setItem('simplefit.lastSelection', JSON.stringify({program,$level:$('#level').value,day:$('#day').value}));}
-function tick(){const diff=Math.floor((Date.now()-startedAt)/1000); if(mode==='countdown'){const left=remaining-diff; $('#timer').textContent=fmt(left); if(left<=0){clearInterval(timerId);running=false;$('#startPause').textContent='Done'; if(navigator.vibrate) navigator.vibrate([200,100,200]);}} else $('#timer').textContent=fmt(elapsed+diff);}
-function startPause(){if(!current) renderWorkout(); if(running){elapsed += Math.floor((Date.now()-startedAt)/1000); clearInterval(timerId); running=false; $('#startPause').textContent='Resume';} else {startedAt=Date.now(); timerId=setInterval(tick,250); running=true; $('#startPause').textContent='Pause'; tick();}}
-async function finish(){if(!current) return; if(running) startPause(); const duration = mode==='countdown' ? (current.durationSeconds || remaining) : elapsed; const log={id:new Date().toISOString(),createdAt:new Date().toISOString(),program:current.program,level:current.level||null,day:current.day||null,type:current.type,title:current.title,durationSeconds:duration,roundsCompleted:+$('#rounds').value||0,score:$('#score').value.trim(),notes:$('#notes').value.trim()}; await addLog(log); $('#rounds').value=0; $('#score').value=''; $('#notes').value=''; await renderHistory();}
-async function renderHistory(){const logs=await getLogs(); $('#history').innerHTML=logs.length?logs.map(l=>`<div class="history-item"><strong>${new Date(l.createdAt).toLocaleString()}</strong><br>${l.title}<br><span class="muted">${l.score || (l.roundsCompleted?l.roundsCompleted+' rounds':'completed')}${l.notes?' · '+l.notes:''}</span></div>`).join(''):'<p class="muted">No workouts saved yet.</p>';}
-async function init(){data=await fetch('data/workouts.json').then(r=>r.json()); renderLevels(); const last=JSON.parse(localStorage.getItem('simplefit.lastSelection')||'{}'); if(last.program) $('#program').value=last.program; if(last.$level) $('#level').value=last.$level; if(last.day) $('#day').value=last.day; renderWorkout(); await renderHistory();}
-$('#loadWorkout').onclick=renderWorkout; $('#program').onchange=renderWorkout; $('#level').onchange=renderWorkout; $('#day').onchange=renderWorkout; $('#startPause').onclick=startPause; $('#reset').onclick=renderWorkout; $('#finish').onclick=finish;
-$('#exportData').onclick=async()=>{const logs=await getLogs(); const bytes=SimpleFitBackup.createBackupZip(logs); const blob=new Blob([bytes],{type:'application/zip'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`simplefit-history-${new Date().toISOString().slice(0,10)}.zip`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
-$('#importData').onchange=async e=>{const f=e.target.files[0]; if(!f)return; try{const obj=SimpleFitBackup.parseBackupBytes(await f.arrayBuffer()); await replaceLogs(obj.logs); await renderHistory(); alert(`Imported ${obj.logs.length} workout${obj.logs.length===1?'':'s'}.`);}catch(err){alert(`Import failed: ${err.message}`);}finally{e.target.value='';}};
-init().catch(err=>{console.error(err); document.body.insertAdjacentHTML('afterbegin',`<p class="notice danger">App failed to load: ${err.message}</p>`)});
+let data;
+let current;
+let timerId = null;
+let timerState = null;
+let lastPhaseIndex = null;
+let workoutSaved = false;
+let persistenceInProgress = false;
+let lockedControlStates = null;
+
+const PERSISTENCE_LOCK_SELECTORS = [
+  '#program', '#level', '#day', '#loadWorkout', '#startPause', '#finish', '#reset',
+  '#rounds', '#score', '#notes', '#exportData', '#importData'
+];
+
+function acquirePersistenceLock() {
+  if (persistenceInProgress) return false;
+  persistenceInProgress = true;
+  lockedControlStates = PERSISTENCE_LOCK_SELECTORS.map(selector => {
+    const element = $(selector);
+    const state = { element, disabled: element.disabled };
+    element.disabled = true;
+    return state;
+  });
+  return true;
+}
+
+function releasePersistenceLock() {
+  if (!persistenceInProgress) return;
+  for (const { element, disabled } of lockedControlStates) element.disabled = disabled;
+  lockedControlStates = null;
+  persistenceInProgress = false;
+  if (timerState?.status === 'completed' || workoutSaved) $('#startPause').disabled = true;
+  if (workoutSaved) $('#finish').disabled = true;
+}
+
+function openDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      if (!request.result.objectStoreNames.contains(STORE)) {
+        request.result.createObjectStore(STORE, { keyPath: 'id' });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+    request.onblocked = () => reject(new Error('Workout history is open in another tab. Close it and try again.'));
+  });
+}
+
+async function addLog(log) {
+  const db = await openDb();
+  try {
+    await SimpleFitCore.addStoreRecord(
+      db,
+      STORE,
+      log,
+      SimpleFitBackup.validateExportableLogs
+    );
+  } finally {
+    db.close();
+  }
+}
+
+async function getLogs() {
+  const db = await openDb();
+  try {
+    return await new Promise((resolve, reject) => {
+      const request = db.transaction(STORE).objectStore(STORE).getAll();
+      request.onsuccess = () => resolve(SimpleFitCore.sortLogsNewestFirst(request.result));
+      request.onerror = () => reject(request.error);
+    });
+  } finally {
+    db.close();
+  }
+}
+
+async function replaceLogs(logs, expectedLogs) {
+  SimpleFitBackup.validateExportableLogs(logs);
+  const db = await openDb();
+  try {
+    await SimpleFitCore.replaceStoreRecordsIfUnchanged(db, STORE, expectedLogs, logs);
+  } finally {
+    db.close();
+  }
+}
+
+function formatMilliseconds(milliseconds, roundUp = false) {
+  const seconds = Math.max(0, roundUp
+    ? Math.ceil(milliseconds / 1000)
+    : Math.floor(milliseconds / 1000));
+  return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+}
+
+function renderLevels() {
+  const select = $('#level');
+  const options = data.programs.beginner.levels.map(level => {
+    const option = document.createElement('option');
+    option.value = String(level.level);
+    option.textContent = `Level ${level.level}`;
+    return option;
+  });
+  select.replaceChildren(...options);
+}
+
+function renderExerciseList(items) {
+  const nodes = items.map(item => {
+    const row = document.createElement('div');
+    row.className = 'exercise-item';
+    const exercise = document.createElement('strong');
+    exercise.textContent = item.exercise;
+    const detail = document.createElement('span');
+    detail.textContent = Number.isFinite(item.reps) ? `${item.reps} reps` : String(item.reps);
+    row.append(exercise, detail);
+    return row;
+  });
+  $('#exerciseList').replaceChildren(...nodes);
+}
+
+function tabataStatus(view) {
+  if (!view.phase) return 'Tabata complete';
+  if (view.phase.kind === 'work') {
+    return `Work · ${view.phase.exercise} · round ${view.phase.round} of ${view.phase.rounds}`;
+  }
+  if (view.phase.kind === 'rest') {
+    if (view.nextPhase?.kind === 'work') {
+      return `Rest · next: ${view.nextPhase.exercise} round ${view.nextPhase.round}`;
+    }
+    if (view.nextPhase?.kind === 'rotation-rest') return 'Rest · rotation break next';
+    return 'Final rest';
+  }
+  return `Rotation rest · next: ${view.phase.exercise}`;
+}
+
+function updateTimerDisplay(now = Date.now()) {
+  if (!timerState) return;
+  const previousStatus = timerState.status;
+  timerState = SimpleFitTimer.updateTimer(timerState, now);
+  const view = SimpleFitTimer.timerView(timerState, now);
+
+  if (timerState.phases.length) {
+    $('#timer').textContent = formatMilliseconds(view.phaseRemainingMs, true);
+    $('#timerStatus').textContent = tabataStatus(view);
+    if (view.phaseIndex !== lastPhaseIndex) {
+      if (lastPhaseIndex !== null && previousStatus === 'running' && navigator.vibrate) navigator.vibrate(80);
+      lastPhaseIndex = view.phaseIndex;
+    }
+  } else if (timerState.durationMs !== null) {
+    $('#timer').textContent = formatMilliseconds(view.remainingMs, true);
+    $('#timerStatus').textContent = timerState.status === 'completed' ? 'Workout complete' : 'Countdown';
+  } else {
+    $('#timer').textContent = formatMilliseconds(view.elapsedMs);
+    $('#timerStatus').textContent = timerState.status === 'running' ? 'Workout in progress' : 'Stopwatch';
+  }
+
+  if (timerState.status === 'completed') {
+    clearInterval(timerId);
+    timerId = null;
+    $('#startPause').textContent = 'Done';
+    $('#startPause').disabled = true;
+    if (previousStatus !== 'completed' && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  }
+}
+
+function renderWorkout() {
+  if (persistenceInProgress) return;
+  clearInterval(timerId);
+  timerId = null;
+  lastPhaseIndex = null;
+  workoutSaved = false;
+
+  const program = $('#program').value;
+  const isTabata = program === 'tabata';
+  $('#level-wrap').style.display = isTabata ? 'none' : '';
+  $('#day-wrap').style.display = isTabata ? 'none' : '';
+
+  if (isTabata) {
+    const phases = SimpleFitTimer.buildTabataPhases(data.tabata);
+    current = {
+      program: 'tabata',
+      level: null,
+      day: null,
+      type: 'tabata',
+      title: 'Tabata · 4 movements',
+      label: '20 seconds work · 10 seconds rest',
+      work: data.tabata.intervals.map(interval => ({
+        exercise: interval.exercise,
+        reps: `${interval.rounds} rounds · ${interval.workSeconds}s work / ${interval.restSeconds}s rest`
+      }))
+    };
+    timerState = SimpleFitTimer.createTimer({ phases });
+  } else {
+    const levelNumber = Number($('#level').value);
+    const dayNumber = Number($('#day').value);
+    const level = data.programs.beginner.levels.find(item => item.level === levelNumber)
+      || data.programs.beginner.levels[0];
+    const workout = level.days[dayNumber - 1] || level.days[0];
+    current = {
+      ...workout,
+      program: 'beginner',
+      level: level.level,
+      day: dayNumber,
+      title: `Beginner level ${level.level} · Day ${dayNumber}`
+    };
+    timerState = SimpleFitTimer.createTimer({
+      durationMs: current.type === 'amrap' ? current.durationSeconds * 1000 : null
+    });
+  }
+
+  $('#startPause').textContent = 'Start';
+  $('#startPause').disabled = false;
+  $('#finish').disabled = false;
+  $('#workoutTitle').textContent = current.title;
+  $('#workoutType').textContent = current.label || current.type;
+  renderExerciseList(current.work);
+  updateTimerDisplay();
+
+  SimpleFitCore.saveSelection(SimpleFitCore.getOptionalStorage(globalThis), {
+    program,
+    level: $('#level').value,
+    day: $('#day').value
+  });
+}
+
+function startPause() {
+  if (persistenceInProgress || !current || workoutSaved || timerState.status === 'completed') return;
+  const now = Date.now();
+  if (timerState.status === 'running') {
+    timerState = SimpleFitTimer.pauseTimer(timerState, now);
+    clearInterval(timerId);
+    timerId = null;
+    $('#startPause').textContent = 'Resume';
+    $('#timerStatus').textContent = 'Workout paused';
+  } else {
+    timerState = SimpleFitTimer.startTimer(timerState, now);
+    timerId = setInterval(updateTimerDisplay, 250);
+    $('#startPause').textContent = 'Pause';
+    updateTimerDisplay(now);
+  }
+}
+
+function applyFinishControlState(saveFailed = false) {
+  const controls = SimpleFitCore.finishControlState(timerState.status, saveFailed);
+  $('#startPause').textContent = controls.startLabel;
+  $('#startPause').disabled = controls.startDisabled;
+  $('#timerStatus').textContent = controls.statusText;
+}
+
+async function finish() {
+  if (persistenceInProgress || !current || workoutSaved) return;
+  const now = Date.now();
+  if (timerState.status === 'running') timerState = SimpleFitTimer.pauseTimer(timerState, now);
+  clearInterval(timerId);
+  timerId = null;
+
+  applyFinishControlState();
+
+  const view = SimpleFitTimer.timerView(timerState, now);
+  const createdAt = new Date().toISOString();
+  const id = globalThis.crypto?.randomUUID?.() || `${createdAt}-${Math.random().toString(36).slice(2)}`;
+  const log = {
+    id,
+    createdAt,
+    program: current.program,
+    level: current.level,
+    day: current.day,
+    type: current.type,
+    title: current.title,
+    durationSeconds: Math.round(view.elapsedMs / 1000),
+    roundsCompleted: Number($('#rounds').value) || 0,
+    score: $('#score').value.trim(),
+    notes: $('#notes').value.trim()
+  };
+
+  if (!acquirePersistenceLock()) return;
+  let result;
+  try {
+    result = await SimpleFitCore.withCrossContextLock(
+      globalThis,
+      PERSISTENCE_LOCK_NAME,
+      () => SimpleFitCore.persistThenRefresh(() => addLog(log), renderHistory)
+    );
+  } catch (error) {
+    releasePersistenceLock();
+    applyFinishControlState(true);
+    $('#finish').disabled = false;
+    alert(`Save failed: ${error.message}`);
+    return;
+  }
+
+  workoutSaved = true;
+  releasePersistenceLock();
+  $('#startPause').disabled = true;
+  $('#finish').disabled = true;
+  $('#timerStatus').textContent = 'Workout saved';
+  $('#rounds').value = 0;
+  $('#score').value = '';
+  $('#notes').value = '';
+  if (result.refreshError) {
+    alert(`Workout saved, but history could not refresh: ${result.refreshError.message}. Reload the page to update the list.`);
+  }
+}
+
+async function renderHistory() {
+  const logs = await getLogs();
+  SimpleFitCore.renderHistory($('#history'), logs);
+}
+
+function restoreSelection() {
+  const last = SimpleFitCore.loadSelection(SimpleFitCore.getOptionalStorage(globalThis));
+  if ([...$('#program').options].some(option => option.value === last.program)) $('#program').value = last.program;
+  if ([...$('#level').options].some(option => option.value === String(last.level))) $('#level').value = String(last.level);
+  if ([...$('#day').options].some(option => option.value === String(last.day))) $('#day').value = String(last.day);
+}
+
+async function performExport() {
+  const logs = await getLogs();
+  if (!logs.length) {
+    alert('There is no workout history to export yet.');
+    return;
+  }
+  const bytes = SimpleFitBackup.createBackupZip(logs);
+  const blob = new Blob([bytes], { type: 'application/zip' });
+  const anchor = document.createElement('a');
+  anchor.href = URL.createObjectURL(blob);
+  anchor.download = `simplefit-history-${new Date().toISOString().slice(0, 10)}.zip`;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(anchor.href), 1000);
+}
+
+async function exportHistory() {
+  if (persistenceInProgress || !acquirePersistenceLock()) return;
+  try {
+    await SimpleFitCore.withCrossContextLock(globalThis, PERSISTENCE_LOCK_NAME, performExport);
+  } catch (error) {
+    alert(`Export failed: ${error.message}`);
+  } finally {
+    releasePersistenceLock();
+  }
+}
+
+async function prepareImport(file) {
+  let backup;
+  let existing;
+  try {
+    if (file.size > SimpleFitBackup.MAX_BACKUP_FILE_BYTES) {
+      throw new Error('The selected SimpleFit backup file is too large.');
+    }
+    backup = SimpleFitBackup.parseBackupBytes(await file.arrayBuffer());
+    existing = await getLogs();
+  } catch (error) {
+    alert(`Import failed: ${error.message}`);
+    return null;
+  }
+
+  const message = existing.length
+    ? `Replace ${existing.length} existing workout${existing.length === 1 ? '' : 's'} with ${backup.logs.length} imported workout${backup.logs.length === 1 ? '' : 's'}? Export your current history first if you may need it.`
+    : `Import ${backup.logs.length} workout${backup.logs.length === 1 ? '' : 's'}?`;
+  return confirm(message) ? { backup, existing } : null;
+}
+
+async function commitImport({ backup, existing }) {
+  await replaceLogs(backup.logs, existing);
+  return backup.logs.length;
+}
+
+async function importHistory(event) {
+  if (persistenceInProgress) {
+    event.target.value = '';
+    return;
+  }
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!acquirePersistenceLock()) {
+    event.target.value = '';
+    return;
+  }
+  try {
+    const prepared = await prepareImport(file);
+    if (!prepared) return;
+    let importedCount;
+    try {
+      importedCount = await SimpleFitCore.withCrossContextLock(
+        globalThis,
+        PERSISTENCE_LOCK_NAME,
+        () => commitImport(prepared)
+      );
+    } catch (error) {
+      alert(`Import failed: ${error.message}`);
+      return;
+    }
+
+    let refreshError = null;
+    try { await renderHistory(); } catch (error) { refreshError = error; }
+    const imported = `${importedCount} workout${importedCount === 1 ? '' : 's'}`;
+    if (refreshError) {
+      alert(`Imported ${imported}, but history could not refresh: ${refreshError.message}. Reload the page to update the list.`);
+    } else {
+      alert(`Imported ${imported}.`);
+    }
+  } finally {
+    releasePersistenceLock();
+    event.target.value = '';
+  }
+}
+
+function showLoadError(error) {
+  console.error(error);
+  const notice = document.createElement('p');
+  notice.className = 'notice danger';
+  notice.textContent = `App failed to load: ${error.message}`;
+  document.body.prepend(notice);
+}
+
+async function init() {
+  const response = await fetch('data/workouts.json');
+  if (!response.ok) throw new Error(`Workout data request failed (${response.status}).`);
+  data = await response.json();
+  renderLevels();
+  restoreSelection();
+  renderWorkout();
+  await renderHistory();
+}
+
+$('#loadWorkout').addEventListener('click', renderWorkout);
+$('#program').addEventListener('change', renderWorkout);
+$('#level').addEventListener('change', renderWorkout);
+$('#day').addEventListener('change', renderWorkout);
+$('#startPause').addEventListener('click', startPause);
+$('#reset').addEventListener('click', renderWorkout);
+$('#finish').addEventListener('click', finish);
+$('#exportData').addEventListener('click', exportHistory);
+$('#importData').addEventListener('change', importHistory);
+
+init().catch(showLoadError);
