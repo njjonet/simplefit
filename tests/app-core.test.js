@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { addStoreRecord, finishControlState, getOptionalStorage, loadSelection, normalizeSelection, persistThenRefresh, renderHistory, replaceStoreRecords, replaceStoreRecordsIfUnchanged, saveSelection, sortLogsNewestFirst, withCrossContextLock } = require('../app-core.js');
+const { addStoreRecord, finishControlState, getOptionalStorage, loadSelection, normalizeSelection, persistThenRefresh, renderHistory, replaceStoreRecords, replaceStoreRecordsIfUnchanged, saveSelection, setTextIfChanged, sortLogsNewestFirst, withCrossContextLock } = require('../app-core.js');
 
 class FakeElement {
   constructor(tagName) {
@@ -14,6 +14,23 @@ class FakeElement {
 }
 
 const fakeDocument = { createElement: tagName => new FakeElement(tagName) };
+
+
+test('text updates mutate an element only when the value changes', () => {
+  let value = 'Workout in progress';
+  let setterCalls = 0;
+  const element = {
+    get textContent() { return value; },
+    set textContent(nextValue) { setterCalls += 1; value = nextValue; }
+  };
+
+  setTextIfChanged(element, 'Workout in progress');
+  setTextIfChanged(element, 'Workout paused');
+  setTextIfChanged(element, 'Workout paused');
+
+  assert.equal(value, 'Workout paused');
+  assert.equal(setterCalls, 1);
+});
 
 function allElements(element) {
   return [element, ...element.children.flatMap(child => child instanceof FakeElement ? allElements(child) : [])];
@@ -59,6 +76,16 @@ test('record replacement aborts the transaction on a synchronous write failure',
 
   await assert.rejects(replaceStoreRecords(db, 'logs', [{ createdAt: 'bad' }]), /bad key/);
   assert.equal(aborted, true);
+});
+
+
+test('browser routes every timer status update through change-aware text writes', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const app = fs.readFileSync(path.join(__dirname, '../app.js'), 'utf8');
+
+  assert.doesNotMatch(app, /\$\('#timerStatus'\)\.textContent\s*=/);
+  assert.match(app, /SimpleFitCore\.setTextIfChanged\(\$\('#timerStatus'\),/);
 });
 
 

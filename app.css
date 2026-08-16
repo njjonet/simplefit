@@ -1,0 +1,217 @@
+.app-page {
+  --app-bg: #07100c;
+  --app-panel: #101c16;
+  --app-panel-raised: #14231b;
+  --app-line: #2c4537;
+  --app-ink: #f4fff8;
+  --app-muted: #adc3b6;
+  --app-green: #33d17a;
+  --app-green-dark: #08783f;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--app-bg);
+  color: var(--app-ink);
+  line-height: 1.45;
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+}
+
+.app-page a { color: var(--app-green); }
+.app-page .skip-link { color: #07100c; }
+.app-page .skip-link:focus { z-index: 30; }
+.app-page button,
+.app-page .button,
+.app-page input,
+.app-page select { min-height: 44px; }
+.app-page button:focus-visible,
+.app-page .button:focus-visible,
+.app-page input:focus-visible,
+.app-page select:focus-visible,
+.app-page textarea:focus-visible,
+.app-page a:focus-visible { outline: 3px solid #facc15; outline-offset: 3px; }
+.app-page button:disabled { cursor: not-allowed; opacity: .55; }
+
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--app-line);
+  background: rgba(7, 16, 12, .94);
+  padding-top: env(safe-area-inset-top);
+  backdrop-filter: blur(12px);
+}
+.app-bar-inner {
+  width: min(calc(1320px + max(14px, env(safe-area-inset-left)) + max(14px, env(safe-area-inset-right))), 100%);
+  min-height: 64px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding-left: max(14px, env(safe-area-inset-left));
+  padding-right: max(14px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.app-identity { display: flex; align-items: center; gap: 10px; }
+.app-identity strong,
+.app-identity small { display: block; }
+.app-identity strong { letter-spacing: -.02em; }
+.app-identity small { color: var(--app-muted); font-size: .76rem; }
+.app-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--app-green);
+  color: #04130a;
+  font-weight: 900;
+}
+.website-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid var(--app-line);
+  border-radius: 12px;
+  color: var(--app-ink) !important;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.app-main {
+  width: min(calc(1320px + max(12px, env(safe-area-inset-left)) + max(12px, env(safe-area-inset-right))), 100%);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 18px max(12px, env(safe-area-inset-right)) 18px max(12px, env(safe-area-inset-left));
+}
+.app-workspace { display: grid; gap: 16px; }
+.app-view { display: none; min-width: 0; }
+.app-view.is-active { display: block; }
+.app-card {
+  padding: 20px;
+  border: 1px solid var(--app-line);
+  border-radius: 20px;
+  background: var(--app-panel);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .24);
+}
+.app-card + .app-card { margin-top: 16px; }
+.app-card h2,
+.app-card h3,
+.app-card p { margin-top: 0; }
+.app-card h2 { margin-bottom: 18px; font-size: 1.5rem; }
+.kicker { margin-bottom: 4px; color: var(--app-green); font-size: .74rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+.timer-card { text-align: center; background: radial-gradient(circle at 50% 25%, #173827, var(--app-panel) 62%); }
+.timer-card h3 { margin-bottom: 4px; font-size: clamp(1.1rem, 4vw, 1.55rem); }
+.app-page .timer {
+  margin: 10px 0 0;
+  color: var(--app-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(4.5rem, 23vw, 8.5rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -.08em;
+  line-height: .95;
+  text-shadow: 0 0 36px rgba(51, 209, 122, .16);
+}
+.timer-status { min-height: 1.5em; margin: 12px 0 20px !important; color: var(--app-muted); font-weight: 700; }
+.workout-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.workout-actions #startPause { grid-column: 1 / -1; min-height: 56px; font-size: 1.12rem; }
+.app-page button,
+.app-page .button { border-radius: 12px; background: var(--app-green-dark); color: #fff; box-shadow: none; }
+.app-page button.secondary,
+.app-page .button.secondary { background: #26382f; color: var(--app-ink); border: 1px solid var(--app-line); }
+.app-page button.ghost { background: transparent; color: var(--app-ink); border: 1px solid var(--app-line); }
+.workout-detail { display: grid; gap: 20px; }
+.safety-note {
+  margin: 16px 4px 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--app-line);
+  color: var(--app-muted);
+  font-size: .9rem;
+}
+.safety-note strong { color: var(--app-ink); }
+.app-page .exercise-item { border-color: var(--app-line); }
+.app-page .exercise-item span,
+.panel-heading p { color: var(--app-muted); }
+.result-grid { display: grid; gap: 14px; }
+.app-page label { color: var(--app-muted); font-weight: 750; }
+.app-page input,
+.app-page select,
+.app-page textarea {
+  width: 100%;
+  margin-top: 7px;
+  border: 1px solid var(--app-line);
+  border-radius: 11px;
+  background: #08130e;
+  color: var(--app-ink);
+}
+.app-page input,
+.app-page select { padding: 10px 12px; }
+.app-page textarea { padding: 12px; resize: vertical; }
+.app-page ::placeholder { color: #879d90; opacity: 1; }
+.app-page .control { display: grid; gap: 16px; }
+.app-page .control h2 { margin-bottom: 0; }
+.panel-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; }
+.panel-heading h2,
+.panel-heading p { margin-bottom: 0; }
+.history-tools { display: grid; gap: 10px; margin: 20px 0; }
+.import-button { display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.app-page .import-button:focus-within { outline: 3px solid #facc15; outline-offset: 3px; }
+.app-page .history-item { border-color: var(--app-line); }
+
+.app-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 7px max(8px, env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  border-top: 1px solid var(--app-line);
+  background: rgba(7, 16, 12, .97);
+  backdrop-filter: blur(14px);
+}
+.app-page .app-nav button {
+  min-height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 5px;
+  border: 0;
+  background: transparent;
+  color: var(--app-muted);
+  font-size: .75rem;
+}
+.app-page .app-nav button span { font-size: 1rem; }
+.app-page .app-nav button[aria-pressed="true"] { color: var(--app-green); background: #112a1d; }
+
+@media (min-width: 600px) {
+  .result-grid,
+  .history-tools { grid-template-columns: 1fr 1fr; }
+  .workout-actions { grid-template-columns: 1.4fr 1fr 1fr; }
+  .workout-actions #startPause { grid-column: auto; }
+}
+
+@media (min-width: 960px) {
+  .app-page { padding-bottom: 0; }
+  .app-main { padding-top: 24px; padding-bottom: 36px; }
+  .app-workspace { grid-template-columns: minmax(220px, .72fr) minmax(430px, 1.5fr) minmax(260px, .88fr); grid-template-areas: "setup workout history"; align-items: start; }
+  .setup-panel { grid-area: setup; }
+  .workout-panel { grid-area: workout; }
+  .history-panel { grid-area: history; }
+  .app-view { display: block; }
+  .app-nav { display: none; }
+  .app-card { padding: 22px; }
+  .app-page .timer { font-size: clamp(5rem, 9vw, 8rem); }
+  .panel-heading { display: block; }
+  .panel-heading p { margin-top: 4px; }
+  .history-tools { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}

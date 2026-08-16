@@ -2,77 +2,86 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#16a34a">
-<link rel="manifest" href="manifest.webmanifest">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08110d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SimpleFit">
+<link rel="manifest" href="manifest.webmanifest?v=app-shell-1">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css?v=hamburger-1">
-<script defer src="site.js?v=hamburger-1"></script>
-<title>App · SimpleFit</title>
-<meta name="description" content="Installable SimpleFit PWA workout timer and local workout log.">
+<link rel="stylesheet" href="app.css?v=app-shell-1">
+<title>Workout App · SimpleFit</title>
+<meta name="description" content="Installable SimpleFit workout timer and private, local workout history.">
 <link rel="canonical" href="https://simplefit.org/app.html">
-<meta property="og:title" content="App · SimpleFit">
-<meta property="og:description" content="Installable SimpleFit PWA workout timer and local workout log.">
+<meta property="og:title" content="Workout App · SimpleFit">
+<meta property="og:description" content="Installable SimpleFit workout timer and private, local workout history.">
 <meta property="og:type" content="website">
 </head>
-<body>
+<body class="app-page">
 <a class="skip-link" href="#main">Skip to main content</a>
-<header class="site-header">
-  <div class="wrap header-grid">
-    <a class="brand" href="./" aria-label="SimpleFit home">
-      <span class="brand-mark">SF</span>
-      <span><strong>SimpleFit</strong><small>Bodyweight exercises · circuit training</small></span>
-    </a>
-    <button class="menu-toggle" type="button" aria-controls="main-nav" aria-expanded="false">
-      <span class="menu-toggle-bars" aria-hidden="true"></span>
-      <span class="sr-only">Menu</span>
-    </button>
-    <nav class="nav" id="main-nav" aria-label="Main navigation">
-      <a href="./">Home</a>
-      <a href="exercises.html">Workouts</a>
-      <a href="app.html" class="nav-cta">Practice</a>
-      <a href="nutrition.html">Nutrition</a>
-      <a href="community.html">Community</a>
-      <a href="faq.html">FAQ</a>
-    </nav>
+<header class="app-bar">
+  <div class="app-bar-inner">
+    <div class="app-identity" aria-label="SimpleFit workout app">
+      <span class="app-mark" aria-hidden="true">SF</span>
+      <span><strong>SimpleFit</strong><small>Private · offline-friendly</small></span>
+    </div>
+    <a class="website-link" href="./" aria-label="Back to SimpleFit website">Website</a>
   </div>
 </header>
-<main id="main" class="wrap main">
+<main id="main" class="app-main">
+  <h1 class="sr-only">SimpleFit workout app</h1>
+  <div class="app-workspace">
+    <section id="workout-view" class="app-view workout-panel is-active" data-view-panel="workout" aria-labelledby="workout-view-heading">
+      <div class="app-card timer-card">
+        <p class="kicker" id="workoutType">Workout</p>
+        <h2 id="workout-view-heading" class="sr-only">Workout</h2>
+        <h3 id="workoutTitle">Choose a workout</h3>
+        <div class="timer" id="timer" role="timer" aria-live="off">00:00</div>
+        <p class="timer-status" id="timerStatus" role="status" aria-live="polite">Ready</p>
+        <div class="workout-actions"><button id="startPause">Start</button><button id="finish" class="secondary">Finish &amp; save</button><button id="reset" class="ghost">Reset</button></div>
+      </div>
+      <div class="app-card workout-detail">
+        <div><h3>Work</h3><div id="exerciseList" class="exercise-list"></div></div>
+        <div class="result-grid"><label>Rounds completed<input id="rounds" type="number" min="0" step="1" value="0"></label><label>Score / time note<input id="score" maxlength="10000" placeholder="e.g. 12:35 or 14 rounds + 2 push-ups"></label></div>
+        <label>Notes<textarea id="notes" maxlength="10000" rows="3" placeholder="How did it feel? substitutions? form notes?"></textarea></label>
+      </div>
+      <p class="safety-note"><strong>Train safely:</strong> Stop if exercise causes pain. Consult an appropriate medical professional before starting a fitness programme.</p>
+    </section>
 
-<h1>Practice</h1>
-<p class="lead">Run a SimpleFit workout, save results locally on this device, and export your history any time. No account, no server.</p>
-<div class="app-shell">
-  <aside class="card control">
-    <label>Program<select id="program"><option value="beginner">Beginner SimpleFit</option><option value="tabata">Tabata timer</option></select></label>
-    <label id="level-wrap">Level<select id="level"></select></label>
-    <label id="day-wrap">Workout day<select id="day"><option value="1">Day 1 · AMRAP 20 min</option><option value="2">Day 2 · 5 rounds for time</option><option value="3">Day 3 · For time</option></select></label>
-    <button id="loadWorkout">Load workout</button>
-    <button id="exportData" class="secondary">Export history (.zip)</button>
-    <label class="button secondary" style="text-align:center">Import history<input id="importData" type="file" accept=".zip,.json,application/zip,application/json" class="sr-only"></label>
-  </aside>
-  <section class="card">
-    <p class="kicker" id="workoutType">Workout</p>
-    <h2 id="workoutTitle">Choose a workout</h2>
-    <div class="timer" id="timer" role="timer" aria-live="off">00:00</div>
-    <p class="muted" id="timerStatus" role="status" aria-live="polite">Ready</p>
-    <div class="button-row"><button id="startPause">Start</button><button id="finish" class="secondary">Finish & save</button><button id="reset" class="ghost">Reset</button></div>
-    <div class="section"><h3>Work</h3><div id="exerciseList" class="exercise-list"></div></div>
-    <div class="section grid two"><label>Rounds completed<input id="rounds" type="number" min="0" step="1" value="0"></label><label>Score / time note<input id="score" maxlength="10000" placeholder="e.g. 12:35 or 14 rounds + 2 push-ups"></label></div>
-    <label class="section">Notes<textarea id="notes" maxlength="10000" rows="3" placeholder="How did it feel? substitutions? form notes?"></textarea></label>
-  </section>
-</div>
-<section class="section card"><h2>History stored on this device</h2><div id="history"></div></section>
+    <section id="history-view" class="app-view history-panel" data-view-panel="history" aria-labelledby="history-view-heading">
+      <div class="app-card">
+        <div class="panel-heading"><div><p class="kicker">Local log</p><h2 id="history-view-heading">History</h2></div><p>Stored only on this device.</p></div>
+        <div class="history-tools">
+          <button id="exportData" class="secondary">Export history (.zip)</button>
+          <label class="button secondary import-button">Import history<input id="importData" type="file" accept=".zip,.json,application/zip,application/json" class="sr-only"></label>
+        </div>
+        <div id="history"></div>
+      </div>
+    </section>
+
+    <section id="setup-view" class="app-view setup-panel" data-view-panel="setup" aria-labelledby="setup-view-heading">
+      <div class="app-card control">
+        <p class="kicker">Plan</p>
+        <h2 id="setup-view-heading">Setup</h2>
+        <label>Program<select id="program"><option value="beginner">Beginner SimpleFit</option><option value="tabata">Tabata timer</option></select></label>
+        <label id="level-wrap">Level<select id="level"></select></label>
+        <label id="day-wrap">Workout day<select id="day"><option value="1">Day 1 · AMRAP 20 min</option><option value="2">Day 2 · 5 rounds for time</option><option value="3">Day 3 · For time</option></select></label>
+        <button id="loadWorkout">Load workout</button>
+      </div>
+    </section>
+  </div>
+</main>
+<nav class="app-nav" aria-label="App views">
+  <button type="button" data-app-view="workout" aria-controls="workout-view" aria-pressed="true"><span aria-hidden="true">●</span>Workout</button>
+  <button type="button" data-app-view="history" aria-controls="history-view" aria-pressed="false"><span aria-hidden="true">≡</span>History</button>
+  <button type="button" data-app-view="setup" aria-controls="setup-view" aria-pressed="false"><span aria-hidden="true">⚙</span>Setup</button>
+</nav>
+<script defer src="site.js?v=hamburger-1"></script>
 <script src="vendor/fflate.min.js?v=repair-1"></script>
 <script src="backup.js?v=repair-1"></script>
-<script src="app-core.js?v=repair-1"></script>
+<script src="app-core.js?v=app-shell-1"></script>
 <script src="timer-core.js?v=repair-1"></script>
-<script src="app.js?v=repair-1"></script>
-
-</main>
-<footer class="site-footer">
-  <div class="wrap">
-    <p>SimpleFit is free, community-preserved, and works offline. Consult your physician before starting any fitness program. If something hurts, stop.</p>
-  </div>
-</footer>
+<script src="app.js?v=app-shell-1"></script>
 </body>
 </html>

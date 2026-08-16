@@ -3,6 +3,10 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.SimpleFitCore = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  function setTextIfChanged(element, text) {
+    if (element.textContent !== text) element.textContent = text;
+  }
+
   function sortLogsNewestFirst(logs) {
     return [...logs].sort((a, b) => {
       const aTime = Date.parse(a.createdAt);
@@ -201,5 +205,5 @@
     });
   }
 
-  return { addStoreRecord, finishControlState, getOptionalStorage, loadSelection, normalizeSelection, historySummary, persistThenRefresh, renderHistory, replaceStoreRecords, replaceStoreRecordsIfUnchanged, saveSelection, sortLogsNewestFirst, withCrossContextLock };
+  return { addStoreRecord, finishControlState, getOptionalStorage, loadSelection, normalizeSelection, historySummary, persistThenRefresh, renderHistory, replaceStoreRecords, replaceStoreRecordsIfUnchanged, saveSelection, setTextIfChanged, sortLogsNewestFirst, withCrossContextLock };
 });

@@ -1,12 +1,14 @@
 {
+  "id": "app.html",
   "name": "SimpleFit Workout Companion",
   "short_name": "SimpleFit",
-  "description": "The classic SimpleFit bodyweight workout program, rebuilt as an offline-friendly PWA.",
+  "description": "A focused, offline-friendly workout timer and private workout history for SimpleFit training.",
   "start_url": "app.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#16a34a",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#07100c",
+  "theme_color": "#08110d",
   "icons": [
     {
       "src": "icons/icon.svg",

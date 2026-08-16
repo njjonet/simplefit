@@ -22,7 +22,7 @@ function loadWorker(fetchImpl = async () => new Response('ok'), putImpl = async 
   };
   const caches = {
     async open() { return cache; },
-    async keys() { return ['simplefit-v5', 'simplefit-v7', 'simplefit-v8', 'unrelated-project-cache']; },
+    async keys() { return ['simplefit-v5', 'simplefit-v7', 'simplefit-v8', 'simplefit-v9', 'unrelated-project-cache']; },
     async delete(key) { deleted.push(key); return true; },
     async match(request) { return cache.match(request); }
   };
@@ -52,16 +52,42 @@ async function dispatch(handler, event = {}) {
 test('service-worker activation deletes only old SimpleFit caches', async () => {
   const worker = loadWorker();
   await dispatch(worker.listeners.activate);
-  assert.deepEqual(worker.deleted, ['simplefit-v5', 'simplefit-v7']);
+  assert.deepEqual(worker.deleted, ['simplefit-v5', 'simplefit-v7', 'simplefit-v8']);
+});
+
+test('standalone app shell ships in the v9 cache', () => {
+  assert.match(source, /const CACHE = 'simplefit-v9'/);
 });
 
 test('precache uses the exact versioned assets referenced by HTML', async () => {
   const worker = loadWorker();
   await dispatch(worker.listeners.install);
   assert.ok(worker.added.includes('styles.css?v=hamburger-1'));
+  assert.ok(worker.added.includes('app.css?v=app-shell-1'));
   assert.ok(worker.added.includes('site.js?v=hamburger-1'));
-  assert.ok(worker.added.includes('app-core.js?v=repair-1'));
   assert.ok(worker.added.includes('timer-core.js?v=repair-1'));
+});
+
+test('app shell and v9 precache request the app-core version required by app.js', async () => {
+  const html = fs.readFileSync(path.join(__dirname, '../app.html'), 'utf8');
+  const worker = loadWorker();
+  await dispatch(worker.listeners.install);
+
+  assert.match(html, /src="app-core\.js\?v=app-shell-1"/);
+  assert.ok(worker.added.includes('app-core.js?v=app-shell-1'));
+  assert.doesNotMatch(html, /app-core\.js\?v=repair-1/);
+  assert.ok(!worker.added.includes('app-core.js?v=repair-1'));
+});
+
+test('app shell and v9 precache request matching versioned manifest metadata', async () => {
+  const html = fs.readFileSync(path.join(__dirname, '../app.html'), 'utf8');
+  const worker = loadWorker();
+  await dispatch(worker.listeners.install);
+
+  assert.match(html, /rel="manifest" href="manifest\.webmanifest\?v=app-shell-1"/);
+  assert.ok(worker.added.includes('manifest.webmanifest?v=app-shell-1'));
+  assert.doesNotMatch(html, /href="manifest\.webmanifest"/);
+  assert.ok(!worker.added.includes('manifest.webmanifest'));
 });
 
 test('404 asset responses are not written to Cache Storage', async () => {
@@ -104,7 +130,7 @@ test('stateful application scripts use matching content-versioned URLs', async (
   const html = fs.readFileSync(path.join(__dirname, '../app.html'), 'utf8');
   const worker = loadWorker();
   await dispatch(worker.listeners.install);
-  for (const asset of ['app-core.js?v=repair-1', 'timer-core.js?v=repair-1', 'backup.js?v=repair-1', 'app.js?v=repair-1']) {
+  for (const asset of ['app-core.js?v=app-shell-1', 'timer-core.js?v=repair-1', 'backup.js?v=repair-1', 'app.js?v=app-shell-1']) {
     assert.match(html, new RegExp(asset.replace(/[.]/g, '\\.').replace('?', '\\?')));
     assert.ok(worker.added.includes(asset));
   }

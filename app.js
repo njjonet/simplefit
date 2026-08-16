@@ -17,6 +17,22 @@ const PERSISTENCE_LOCK_SELECTORS = [
   '#rounds', '#score', '#notes', '#exportData', '#importData'
 ];
 
+function setActiveAppView(viewName, root = document) {
+  for (const button of root.querySelectorAll('[data-app-view]')) {
+    button.setAttribute('aria-pressed', String(button.dataset.appView === viewName));
+  }
+  for (const panel of root.querySelectorAll('[data-view-panel]')) {
+    panel.classList.toggle('is-active', panel.dataset.viewPanel === viewName);
+  }
+}
+
+function setupAppViewNavigation(root = document) {
+  for (const button of root.querySelectorAll('[data-app-view]')) {
+    button.addEventListener('click', () => setActiveAppView(button.dataset.appView, root));
+  }
+  setActiveAppView('workout', root);
+}
+
 function acquirePersistenceLock() {
   if (persistenceInProgress) return false;
   persistenceInProgress = true;
@@ -144,17 +160,17 @@ function updateTimerDisplay(now = Date.now()) {
 
   if (timerState.phases.length) {
     $('#timer').textContent = formatMilliseconds(view.phaseRemainingMs, true);
-    $('#timerStatus').textContent = tabataStatus(view);
+    SimpleFitCore.setTextIfChanged($('#timerStatus'), tabataStatus(view));
     if (view.phaseIndex !== lastPhaseIndex) {
       if (lastPhaseIndex !== null && previousStatus === 'running' && navigator.vibrate) navigator.vibrate(80);
       lastPhaseIndex = view.phaseIndex;
     }
   } else if (timerState.durationMs !== null) {
     $('#timer').textContent = formatMilliseconds(view.remainingMs, true);
-    $('#timerStatus').textContent = timerState.status === 'completed' ? 'Workout complete' : 'Countdown';
+    SimpleFitCore.setTextIfChanged($('#timerStatus'), timerState.status === 'completed' ? 'Workout complete' : 'Countdown');
   } else {
     $('#timer').textContent = formatMilliseconds(view.elapsedMs);
-    $('#timerStatus').textContent = timerState.status === 'running' ? 'Workout in progress' : 'Stopwatch';
+    SimpleFitCore.setTextIfChanged($('#timerStatus'), timerState.status === 'running' ? 'Workout in progress' : 'Stopwatch');
   }
 
   if (timerState.status === 'completed') {
@@ -234,7 +250,7 @@ function startPause() {
     clearInterval(timerId);
     timerId = null;
     $('#startPause').textContent = 'Resume';
-    $('#timerStatus').textContent = 'Workout paused';
+    SimpleFitCore.setTextIfChanged($('#timerStatus'), 'Workout paused');
   } else {
     timerState = SimpleFitTimer.startTimer(timerState, now);
     timerId = setInterval(updateTimerDisplay, 250);
@@ -247,7 +263,7 @@ function applyFinishControlState(saveFailed = false) {
   const controls = SimpleFitCore.finishControlState(timerState.status, saveFailed);
   $('#startPause').textContent = controls.startLabel;
   $('#startPause').disabled = controls.startDisabled;
-  $('#timerStatus').textContent = controls.statusText;
+  SimpleFitCore.setTextIfChanged($('#timerStatus'), controls.statusText);
 }
 
 async function finish() {
@@ -296,7 +312,7 @@ async function finish() {
   releasePersistenceLock();
   $('#startPause').disabled = true;
   $('#finish').disabled = true;
-  $('#timerStatus').textContent = 'Workout saved';
+  SimpleFitCore.setTextIfChanged($('#timerStatus'), 'Workout saved');
   $('#rounds').value = 0;
   $('#score').value = '';
   $('#notes').value = '';
@@ -426,14 +442,18 @@ async function init() {
   await renderHistory();
 }
 
-$('#loadWorkout').addEventListener('click', renderWorkout);
-$('#program').addEventListener('change', renderWorkout);
-$('#level').addEventListener('change', renderWorkout);
-$('#day').addEventListener('change', renderWorkout);
-$('#startPause').addEventListener('click', startPause);
-$('#reset').addEventListener('click', renderWorkout);
-$('#finish').addEventListener('click', finish);
-$('#exportData').addEventListener('click', exportHistory);
-$('#importData').addEventListener('change', importHistory);
+if (typeof document !== 'undefined') {
+  $('#loadWorkout').addEventListener('click', renderWorkout);
+  $('#program').addEventListener('change', renderWorkout);
+  $('#level').addEventListener('change', renderWorkout);
+  $('#day').addEventListener('change', renderWorkout);
+  $('#startPause').addEventListener('click', startPause);
+  $('#reset').addEventListener('click', renderWorkout);
+  $('#finish').addEventListener('click', finish);
+  $('#exportData').addEventListener('click', exportHistory);
+  $('#importData').addEventListener('change', importHistory);
+  setupAppViewNavigation();
+  init().catch(showLoadError);
+}
 
-init().catch(showLoadError);
+if (typeof module !== 'undefined' && module.exports) module.exports = { setActiveAppView };

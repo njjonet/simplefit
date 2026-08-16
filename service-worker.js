@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'simplefit-';
-const CACHE = 'simplefit-v8';
+const CACHE = 'simplefit-v9';
 const OFFLINE_PAGE = './';
 const ASSETS = [
   './',
@@ -10,14 +10,15 @@ const ASSETS = [
   'community.html',
   'faq.html',
   'styles.css?v=hamburger-1',
+  'app.css?v=app-shell-1',
   'site.js?v=hamburger-1',
-  'app-core.js?v=repair-1',
+  'app-core.js?v=app-shell-1',
   'timer-core.js?v=repair-1',
-  'app.js?v=repair-1',
+  'app.js?v=app-shell-1',
   'backup.js?v=repair-1',
   'vendor/fflate.min.js?v=repair-1',
   'data/workouts.json',
-  'manifest.webmanifest',
+  'manifest.webmanifest?v=app-shell-1',
   'icons/icon.svg'
 ];
 const PRECACHE_URLS = new Set(ASSETS.map(asset => new URL(asset, self.registration.scope).href));
