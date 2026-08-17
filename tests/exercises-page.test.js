@@ -51,6 +51,6 @@ test('mobile workout tables preserve native semantics and balanced widths', () =
 
 test('exercise page and service worker use a coherent table-layout stylesheet version', () => {
   assert.match(html, /styles\.css\?v=workout-tables-1/);
-  assert.match(worker, /const CACHE = 'simplefit-v10'/);
+  assert.match(worker, /const CACHE = 'simplefit-v11'/);
   assert.match(worker, /'styles\.css\?v=workout-tables-1'/);
 });

@@ -22,7 +22,7 @@ function loadWorker(fetchImpl = async () => new Response('ok'), putImpl = async 
   };
   const caches = {
     async open() { return cache; },
-    async keys() { return ['simplefit-v5', 'simplefit-v7', 'simplefit-v8', 'simplefit-v9', 'simplefit-v10', 'unrelated-project-cache']; },
+    async keys() { return ['simplefit-v5', 'simplefit-v7', 'simplefit-v8', 'simplefit-v9', 'simplefit-v10', 'simplefit-v11', 'unrelated-project-cache']; },
     async delete(key) { deleted.push(key); return true; },
     async match(request) { return cache.match(request); }
   };
@@ -52,11 +52,11 @@ async function dispatch(handler, event = {}) {
 test('service-worker activation deletes only old SimpleFit caches', async () => {
   const worker = loadWorker();
   await dispatch(worker.listeners.activate);
-  assert.deepEqual(worker.deleted, ['simplefit-v5', 'simplefit-v7', 'simplefit-v8', 'simplefit-v9']);
+  assert.deepEqual(worker.deleted, ['simplefit-v5', 'simplefit-v7', 'simplefit-v8', 'simplefit-v9', 'simplefit-v10']);
 });
 
-test('latest site assets ship in the v10 cache', () => {
-  assert.match(source, /const CACHE = 'simplefit-v10'/);
+test('latest site assets ship in the v11 cache', () => {
+  assert.match(source, /const CACHE = 'simplefit-v11'/);
 });
 
 test('precache uses the exact versioned assets referenced by HTML', async () => {

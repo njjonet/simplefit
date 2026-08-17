@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'simplefit-';
-const CACHE = 'simplefit-v10';
+const CACHE = 'simplefit-v11';
 const OFFLINE_PAGE = './';
 const ASSETS = [
   './',
@@ -13,6 +13,7 @@ const ASSETS = [
   'styles.css?v=workout-tables-1',
   'app.css?v=app-shell-1',
   'site.js?v=hamburger-1',
+  'analytics.js?v=goatcounter-1',
   'app-core.js?v=app-shell-1',
   'timer-core.js?v=repair-1',
   'app.js?v=app-shell-1',
